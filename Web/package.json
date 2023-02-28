@@ -1,0 +1,43 @@
+{
+  "name": "life-diary-vue",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve-dev": "vue-cli-service serve --mode dev",
+    "serve-prod": "vue-cli-service serve --mode prod",
+    "build-dev": "vue-cli-service build --mode dev",
+    "build-prod": "vue-cli-service build --mode prod",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "axios": "^1.3.2",
+    "core-js": "^3.8.3",
+    "element-ui": "^2.15.12",
+    "less": "^4.1.3",
+    "quill": "^1.3.7",
+    "quill-image-drop-module": "^1.0.3",
+    "quill-image-resize-module": "^3.0.0",
+    "vue": "^2.6.14",
+    "vue-captcha-code": "^1.0.2",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^3.5.1",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.20.2",
+    "@babel/core": "^7.20.12",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "less-loader": "^5.0.0",
+    "sass": "^1.32.7",
+    "sass-loader": "^12.0.0",
+    "vue-template-compiler": "^2.6.14"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
