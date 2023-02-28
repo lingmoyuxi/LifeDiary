@@ -63,7 +63,7 @@
   </div>
 </template>
 
-<style >
+<style scoped>
 .mycontent {
   width: 100vw;
   height: 100vh;
@@ -190,10 +190,11 @@
   border: 2px solid white;
 }
 
-.el-col>span {
+.el-col > span {
   padding-left: 10px;
 }
-.inps input {
+
+.el-col >>> .inps input {
   border: none;
   color: #fff;
   background-color: transparent;
@@ -228,7 +229,7 @@ input[type="number"] {
 </style>
 
 <script>
-import { mapMutations } from "vuex";
+import {mapMutations} from "vuex";
 import tools from '@/utils/utils';
 
 export default {

@@ -13,24 +13,30 @@ const request = axios.create({
 });
 
 request.interceptors.request.use((config) => {
-	config.headers["token"] = localStorage.getItem("token");
+	if (!config.url.match(/https?:\/\//g)) {
+		config.headers["token"] = localStorage.getItem("token");
+	}
 	return config;
 });
 
 request.interceptors.response.use(
 	(response) => {
-		let res = response.data;
-		if (res.code === 200) return response.data;
-		else {
-			if (res.code === 301||res.code === 401) {
-				Element.Message.error(res.msg);
-				router.push({ path: "/login" });
+		if (response.config.url.indexOf(process.env.VUE_APP_SERVER) !== -1) {
+			let res = response.data;
+			if (res.code === 200) return response.data;
+			else {
+				if (res.code === 301 || res.code === 401) {
+					Element.Message.error(res.msg);
+					router.push({path: "/login"});
+					return Promise.reject(res.msg);
+				}
+				Element.Message.error(
+					!res.msg ? "系统异常，请联系管理员!!" : res.msg
+				);
 				return Promise.reject(res.msg);
 			}
-			Element.Message.error(
-				!res.msg ? "系统异常，请联系管理员!!" : res.msg
-			);
-			return Promise.reject(res.msg);
+		} else {
+			return response.data
 		}
 	},
 	(error) => {
