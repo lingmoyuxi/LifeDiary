@@ -7,54 +7,38 @@
   <el-container class="content">
     <el-main>
       <el-timeline>
-        <el-timeline-item placement="top" timestamp="2018/4/12">
+        <el-timeline-item v-for="(value,index) in course" v-if="course.length > 0" :timestamp="value.time"
+                          placement="top">
           <el-card>
-            <h4>功能：最近提交，数据统计</h4>
-            <p>王小虎 提交于 2018/4/12 20:46</p>
+            <p>{{ value.incident }}</p>
           </el-card>
         </el-timeline-item>
-        <el-timeline-item placement="top" timestamp="2018/4/13">
-          <el-card>
-            <h4>更新 Github 模板</h4>
-            <p>王小虎 提交于 2018/4/12 20:46</p>
-          </el-card>
-        </el-timeline-item>
-        <el-timeline-item placement="top" timestamp="2023/3/1">
-          <el-card>
-            <h4>天气板块与诗词板块完工</h4>
-            <p>沫雨熙 提交于 2023/3/1 17:45:23</p>
-          </el-card>
-        </el-timeline-item>
-
+        <el-empty v-else description="这里空空的，啥都没有哦！"/>
       </el-timeline>
     </el-main>
 
     <el-aside width="350px">
-      <el-card>
+      <el-card style="flex-shrink: 0">
         <div id="he-plugin-standard">
           <p>今天天气如何呢……</p>
         </div>
       </el-card>
       <el-card v-if="origin.title.length !== 0">
         <el-row>
-          <el-col align="center">
-            {{ origin.title }}
-          </el-col>
+          <el-col align="center">{{ origin.title }}</el-col>
         </el-row>
         <el-row>
-          <el-col align="center">
-            （{{ origin.dynasty }}）{{ origin.author }}
-          </el-col>
+          <el-col align="center"> （{{ origin.dynasty }}）{{ origin.author }}</el-col>
         </el-row>
         <el-row>
-          <el-col id="shici">
-
+          <el-col class="shiciCol">
+            <div id="shici"/>
           </el-col>
         </el-row>
 
       </el-card>
       <el-card v-else>
-        <p>今天的诗词是什么呢……</p>
+        <p>今天要学那首诗词呢……</p>
       </el-card>
     </el-aside>
   </el-container>
@@ -66,6 +50,7 @@ export default {
   name: "TimeAxisView",
   data() {
     return {
+      course: [],
       origin: {
         author: "",
         content: [],
@@ -76,6 +61,16 @@ export default {
   },
   methods: {},
   mounted() {
+    this.$axios.get('/course').then(
+        res => {
+          if (res.code === 200) {
+            this.course = res.data
+            console.log(this.course)
+          } else {
+            this.$message.error(res.msg)
+          }
+        }
+    )
 
     //和风天气插件调用
     window.WIDGET = {
@@ -110,13 +105,8 @@ export default {
           this.$nextTick(() => {    //上面数据更新完后渲染界面，使用this.$nextTick等待渲染，防止document找不到元素
             const shiciDiv = document.getElementById('shici')
             if (shiciDiv === null) return
-            const data = this.origin.content
-            var dataStr
-            var index = 0
-            var index2 = 0
-            var then = Date.now()
-            var now;
-            const interval = 1000 / 30
+            const data = this.origin.content, interval = 1000 / 30
+            var dataStr, now, index = 0, index2 = 0, then = Date.now()
             const writing = function () {
               requestAnimationFrame(writing)
               now = Date.now()
@@ -149,17 +139,37 @@ export default {
   padding: 20px;
 }
 
+.shiciCol {
+  display: flex;
+  justify-content: center;
+}
+
+.shiciCol > div {
+  height: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.shiciCol > div::-webkit-scrollbar {
+  width: 0 !important
+}
+
 .el-card {
   background-color: #f1f0ed;
 }
 
-.el-aside > .el-card {
-  margin-top: 20px;
+.el-main::-webkit-scrollbar {
+  width: 0 !important
 }
 
 .el-aside {
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.el-aside > .el-card {
+  margin-top: 20px;
 }
 
 /* 滚动条整体 */

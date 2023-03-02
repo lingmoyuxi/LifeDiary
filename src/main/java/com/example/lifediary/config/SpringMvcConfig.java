@@ -1,6 +1,5 @@
-package com.example.lifediary.aspect;
+package com.example.lifediary.config;
 
-import com.example.lifediary.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

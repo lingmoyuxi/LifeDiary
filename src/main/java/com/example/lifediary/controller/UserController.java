@@ -2,8 +2,8 @@ package com.example.lifediary.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.lifediary.common.Result;
 import com.example.lifediary.dto.PageInfo;
+import com.example.lifediary.dto.Result;
 import com.example.lifediary.entity.User;
 import com.example.lifediary.utils.JwtUtils;
 import io.swagger.annotations.Api;
@@ -35,13 +35,13 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "用户列表", notes = "获取所有用户信息")
     @GetMapping("/list")
-    public Result<?> list() {
+    public Result list() {
         return Result.success(userService.list());
     }
 
     @ApiOperation(value = "用户分页", notes = "根据需要将用户列表分页查询")
     @PostMapping("/page")
-    public Result<?> findPage(@RequestBody PageInfo pageInfo) {
+    public Result findPage(@RequestBody PageInfo pageInfo) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(User::getId);
 //        if (!StringUtils.isBlank(pageInfo.getName())) {
@@ -53,13 +53,13 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "用户保存", notes = "用户的新增操作")
     @PostMapping("/save")
-    private Result<?> save(@Validated @RequestBody User user) {
+    private Result save(@Validated @RequestBody User user) {
         return userService.save(user) ? Result.success() : Result.error();
     }
 
     @ApiOperation(value = "用户更新", notes = "用户的更新操作")
     @PostMapping("/update")
-    public Result<?> update(@Validated @RequestBody User user) {
+    public Result update(@Validated @RequestBody User user) {
         Integer userId = JwtUtils.getUserId(request);
         if (user.getId().equals(userId)) {
             return userService.updateById(user) ? Result.success() : Result.error();
@@ -70,13 +70,13 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "用户删除", notes = "用户的批量删除")
     @PostMapping("/delete")
-    public Result<?> save(@RequestBody List<Integer> ids) {
+    public Result save(@RequestBody List<Integer> ids) {
         return userService.removeByIds(ids) ? Result.success() : Result.error();
     }
 
     @ApiOperation(value = "用户登录", notes = "用户登录操作")
     @GetMapping("/login")
-    public Result<?> login(@Max(999999999) @RequestParam("account") Integer account, @NotBlank @RequestParam("password") String password) {
+    public Result login(@Max(999999999) @RequestParam("account") Integer account, @NotBlank @RequestParam("password") String password) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getAccount, account)
                 .eq(User::getPassword, password)
@@ -91,7 +91,7 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "用户注册", notes = "用户注册操作")
     @GetMapping("/registry")
-    public Result<?> registry(@Max(999999999) @RequestParam("account") Integer account, @NotBlank @RequestParam("password") String password) {
+    public Result registry(@Max(999999999) @RequestParam("account") Integer account, @NotBlank @RequestParam("password") String password) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getAccount, account)
                 .last("limit 1");

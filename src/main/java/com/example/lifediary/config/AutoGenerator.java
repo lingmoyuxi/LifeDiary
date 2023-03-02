@@ -26,60 +26,53 @@ public class AutoGenerator {
         List<String> tables = new ArrayList<>();
         tables.add("user");
         tables.add("diary");
-        tables.add("diary_type");
         tables.add("resource");
 
-        FastAutoGenerator.create(URL,USERNAME,PASSWORD)
-                .globalConfig(builder -> {
-                    builder.author(System.getProperty("user.name"))
-                            .outputDir(System.getProperty("user.dir") + "\\src\\main\\java")
-                            .enableSwagger()
-                            .commentDate("yyyy-MM-dd")
-                            .disableOpenDir();
-                }).packageConfig(builder -> {
-                    builder.parent("com.example.lifediary")
-                            .moduleName("")
-                            .entity("entity")
-                            .service("service")
-                            .serviceImpl("serviceImpl")
-                            .controller("controller")
-                            .mapper("mapper")
-                            .xml("mapper")
+        FastAutoGenerator.create(URL, USERNAME, PASSWORD)
+                .globalConfig(builder -> builder.author(System.getProperty("user.name"))
+                        .outputDir(System.getProperty("user.dir") + "\\src\\main\\java")
+                        .enableSwagger()
+                        .commentDate("yyyy-MM-dd")
+                        .disableOpenDir()).packageConfig(builder -> builder.parent("com.example.lifediary")
+                        .moduleName("")
+                        .entity("entity")
+                        .service("service")
+                        .serviceImpl("serviceImpl")
+                        .controller("controller")
+                        .mapper("mapper")
+                        .xml("mapper")
 
-                            //自行移动至java下的mapper中
-                            .pathInfo(Collections.singletonMap(OutputFile.mapper,System.getProperty("user.dir") + "\\src\\main\\resources\\mapper"));
-                }).strategyConfig(builder -> {
-                    builder.addInclude(tables)
+                        //自行移动至java下的mapper中
+                        .pathInfo(Collections.singletonMap(OutputFile.mapper, System.getProperty("user.dir") + "\\src\\main\\resources\\mapper")))
+                .strategyConfig(builder -> builder.addInclude(tables)
+                        .serviceBuilder()
+                        .enableFileOverride()
+                        .formatServiceFileName("%sService")
+                        .formatServiceImplFileName("%sServiceImpl")
 
-                            .serviceBuilder()
-                            .enableFileOverride()
-                            .formatServiceFileName("%sService")
-                            .formatServiceImplFileName("%sServiceImpl")
+                        .entityBuilder()
+                        .enableFileOverride()
+                        .superClass(BaseEntity.class)
+                        //                            .addTableFills(new Column("create_time"), FieldFill.INSERT)
+                        //                            .addTableFills(new Column("create_time"), FieldFill.UPDATE)
+                        .enableLombok()
+                        .logicDeleteColumnName("deleted")
+                        .enableTableFieldAnnotation()
 
-                            .entityBuilder()
-                            .enableFileOverride()
-                            .superClass(BaseEntity.class)
-//                            .addTableFills(new Column("create_time"), FieldFill.INSERT)
-//                            .addTableFills(new Column("create_time"), FieldFill.UPDATE)
-                            .enableLombok()
-                            .logicDeleteColumnName("deleted")
-                            .enableTableFieldAnnotation()
+                        .controllerBuilder()
+                        //                            .enableFileOverride()
+                        .superClass(BaseController.class)
+                        .formatFileName("%sController")
+                        .enableRestStyle()
 
-                            .controllerBuilder()
-//                            .enableFileOverride()
-                            .superClass(BaseController.class)
-                            .formatFileName("%sController")
-                            .enableRestStyle()
+                        .mapperBuilder()
+                        .enableFileOverride()
+                        .enableBaseColumnList()
 
-                            .mapperBuilder()
-                            .enableFileOverride()
-                            .enableBaseColumnList()
-
-                            .superClass(BaseMapper.class)
-                            .formatMapperFileName("%sMapper")
-                            .formatXmlFileName("%sMapper")
-                            .enableMapperAnnotation();
-                }).templateEngine(new FreemarkerTemplateEngine())
+                        .superClass(BaseMapper.class)
+                        .formatMapperFileName("%sMapper")
+                        .formatXmlFileName("%sMapper")
+                        .enableMapperAnnotation()).templateEngine(new FreemarkerTemplateEngine())
                 .execute();
     }
 

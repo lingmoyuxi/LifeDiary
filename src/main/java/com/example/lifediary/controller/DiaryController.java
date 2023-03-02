@@ -2,10 +2,10 @@ package com.example.lifediary.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.lifediary.common.Result;
 import com.example.lifediary.dto.AddDiary;
 import com.example.lifediary.dto.DiaryList;
 import com.example.lifediary.dto.PageInfo;
+import com.example.lifediary.dto.Result;
 import com.example.lifediary.entity.Diary;
 import com.example.lifediary.utils.JwtUtils;
 import io.swagger.annotations.Api;
@@ -34,17 +34,17 @@ public class DiaryController extends BaseController {
 
     @ApiOperation(value = "日记列表", notes = "获取所有日记信息")
     @GetMapping("/list")
-    public Result<?> list() {
+    public Result list() {
         return Result.success(diaryService.list());
     }
 
     @ApiOperation(value = "日记详情", notes = "获取一篇日记信息")
     @GetMapping("/diaryInfo")
-    public Result<?> getDiaryInfo(@NotNull @RequestParam Integer id) {
+    public Result getDiaryInfo(@NotNull @RequestParam Integer id) {
         LambdaQueryWrapper<Diary> wrapper = new LambdaQueryWrapper<>();
         Integer userId = JwtUtils.getUserId(request);
         if (userId == -1) {
-            return Result.error(402, "Token验证未通过或已失效，请重新登录获取token！");
+            return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
         }
         wrapper.eq(Diary::getUseId, userId)
                 .eq(Diary::getId, id);
@@ -54,13 +54,13 @@ public class DiaryController extends BaseController {
 
     @ApiOperation(value = "日记列表", notes = "获取用户的所有日记信息")
     @GetMapping("/diaryList")
-    public Result<?> useDiaryList() {
+    public Result useDiaryList() {
         LambdaQueryWrapper<Diary> wrapper = new LambdaQueryWrapper<>();
         Integer userId = JwtUtils.getUserId(request);
         if (userId == -1) {
-            return Result.error(402, "Token验证未通过或已失效，请重新登录获取token！");
+            return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
         }
-        wrapper.eq(Diary::getUseId, userId).orderBy(true, false, Diary::getCreateTime).orderBy(true, false, Diary::getUpdateTime);
+        wrapper.eq(Diary::getUseId, userId).orderBy(true, false, Diary::getCreateTime, Diary::getUpdateTime);
         List<Diary> list = diaryService.list(wrapper);
         List<DiaryList> result = new ArrayList<>();
         list.forEach(e -> {
@@ -85,7 +85,7 @@ public class DiaryController extends BaseController {
 
     @ApiOperation(value = "日记分页", notes = "根据需要将日记列表分页查询")
     @PostMapping("/page")
-    public Result<?> findPage(@RequestBody PageInfo pageInfo) {
+    public Result findPage(@RequestBody PageInfo pageInfo) {
         LambdaQueryWrapper<Diary> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(Diary::getId);
         Page<Diary> page = diaryService.page(new Page<>(pageInfo.getNum(), pageInfo.getSize()), wrapper);
@@ -94,12 +94,12 @@ public class DiaryController extends BaseController {
 
     @ApiOperation(value = "日记保存", notes = "日记的新增与更新操作")
     @PostMapping("/save")
-    public Result<?> save(@Validated @RequestBody AddDiary newDiary) {
+    public Result save(@Validated @RequestBody AddDiary newDiary) {
         Diary diary = new Diary();
         BeanUtils.copyProperties(newDiary, diary);
         Integer userId = JwtUtils.getUserId(request);
         if (userId == -1) {
-            return Result.error(402, "Token验证未通过或已失效，请重新登录获取token！");
+            return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
         }
         diary.setUseId(userId);
         return diaryService.save(diary) ? Result.success() : Result.error();
@@ -107,15 +107,15 @@ public class DiaryController extends BaseController {
 
     @ApiOperation(value = "日记保存", notes = "日记的新增与更新操作")
     @PostMapping("/update")
-    public Result<?> update(@Validated @RequestBody Diary newDiary) {
+    public Result update(@Validated @RequestBody Diary newDiary) {
         Integer userId = JwtUtils.getUserId(request);
         if (userId == -1) {
-            return Result.error(402, "Token验证未通过或已失效，请重新登录获取token！");
+            return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
         }
         LambdaQueryWrapper<Diary> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Diary::getUseId,userId).eq(Diary::getId, newDiary.getId());
+        wrapper.eq(Diary::getUseId, userId).eq(Diary::getId, newDiary.getId());
         Diary diary = diaryService.getOne(wrapper);
-        if (diary != null){
+        if (diary != null) {
             diaryService.update(newDiary, wrapper);
             return Result.success();
         } else {
@@ -125,13 +125,13 @@ public class DiaryController extends BaseController {
 
     @ApiOperation(value = "日记删除", notes = "日记的删除")
     @GetMapping("/delete")
-    public Result<?> delete(@NotNull @RequestParam Integer id) {
+    public Result delete(@NotNull @RequestParam Integer id) {
         return diaryService.removeById(id) ? Result.success() : Result.error();
     }
 
     @ApiOperation(value = "日记删除", notes = "日记的批量删除")
     @PostMapping("/deleteList")
-    public Result<?> deleteList(@RequestBody List<Integer> ids) {
+    public Result deleteList(@RequestBody List<Integer> ids) {
         return diaryService.removeByIds(ids) ? Result.success() : Result.error();
     }
 }

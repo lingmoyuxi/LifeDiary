@@ -1,4 +1,4 @@
-package com.example.lifediary.interceptor;
+package com.example.lifediary.config;
 
 import com.example.lifediary.exception.CustomException;
 import com.example.lifediary.utils.JwtUtils;
@@ -21,16 +21,16 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
-        if(request.getMethod().equalsIgnoreCase("OPTIONS")){
+    public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
             return true;
         }
         String path = request.getRequestURL().toString();
         String token = request.getHeader("token");
-        log.info("token-->"+token);
-        if(token == null || token.isEmpty()){
+        log.info("token-->" + token);
+        if (token == null || token.isEmpty()) {
             log.info("无权访问! ->" + path);
-            throw new CustomException(401,"无权访问!");
+            throw new CustomException(401, "无权访问!");
         }
         Claims claims = JwtUtils.verifyJwt(token);
         if (claims == null) {
