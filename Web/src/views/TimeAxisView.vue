@@ -6,15 +6,18 @@
 <template>
   <el-container class="content">
     <el-main>
-      <el-timeline>
-        <el-timeline-item v-for="(value,index) in course" v-if="course.length > 0" :timestamp="value.time"
+      <el-timeline v-if="course.length > 0">
+        <el-timeline-item v-for="(value,index) in course" :timestamp="value.time"
                           placement="top">
           <el-card>
-            <p>{{ value.incident }}</p>
+            {{ value.incident }}
           </el-card>
         </el-timeline-item>
-        <el-empty v-else description="这里空空的，啥都没有哦！"/>
       </el-timeline>
+      <el-timeline v-else>
+        <el-empty description="这里空空的，啥都没有哦！"/>
+      </el-timeline>
+
     </el-main>
 
     <el-aside width="350px">
@@ -65,7 +68,6 @@ export default {
         res => {
           if (res.code === 200) {
             this.course = res.data
-            console.log(this.course)
           } else {
             this.$message.error(res.msg)
           }
