@@ -92,7 +92,7 @@ public class DiaryController extends BaseController {
         return Result.success(page);
     }
 
-    @ApiOperation(value = "日记保存", notes = "日记的新增与更新操作")
+    @ApiOperation(value = "日记保存", notes = "日记的新增操作")
     @PostMapping("/save")
     public Result save(@Validated @RequestBody AddDiary newDiary) {
         Diary diary = new Diary();
@@ -105,7 +105,7 @@ public class DiaryController extends BaseController {
         return diaryService.save(diary) ? Result.success() : Result.error();
     }
 
-    @ApiOperation(value = "日记保存", notes = "日记的新增与更新操作")
+    @ApiOperation(value = "日记更新", notes = "日记的更新操作")
     @PostMapping("/update")
     public Result update(@Validated @RequestBody Diary newDiary) {
         Integer userId = JwtUtils.getUserId(request);
