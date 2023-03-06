@@ -55,12 +55,12 @@ public class FileController extends BaseController {
             File iconFile = new File(getPath(path), filename);
             file.transferTo(iconFile);
             user.setIcon("static/" + path + filename);
-            if (icon != null && !icon.isEmpty()) {
+            if (icon != null && !icon.isEmpty() && !icon.equals("static/upload/icon/defaulticon.png")) {
                 File oldIconFile = new File(getPath(icon));
                 if (oldIconFile.isFile() && oldIconFile.exists()) oldIconFile.delete();
             }
             userService.updateById(user);
-            return Result.success(user.getIcon());
+            return Result.success(200, user.getIcon());
         } catch (IOException e) {
             return Result.error("文件处理异常：" + e.getMessage());
         }

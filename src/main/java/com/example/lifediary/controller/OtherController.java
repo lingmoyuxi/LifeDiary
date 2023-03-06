@@ -97,6 +97,21 @@ public class OtherController extends BaseController {
         if (diaryListSortByCreateTime.size() >= 10) {
             enventList.add(new Envent(diaryListSortByCreateTime.get(9).getCreateTime(), "你记录的日记达到10篇！"));
         }
+        if (diaryListSortByCreateTime.size() >= 20) {
+            enventList.add(new Envent(diaryListSortByCreateTime.get(19).getCreateTime(), "你记录的日记达到20篇！"));
+        }
+        if (diaryListSortByCreateTime.size() >= 50) {
+            enventList.add(new Envent(diaryListSortByCreateTime.get(49).getCreateTime(), "你记录的日记达到50篇！"));
+        }
+        if (diaryListSortByCreateTime.size() >= 100) {
+            enventList.add(new Envent(diaryListSortByCreateTime.get(99).getCreateTime(), "你记录的日记达到100篇！"));
+        }
+        if (diaryListSortByCreateTime.size() >= 500) {
+            enventList.add(new Envent(diaryListSortByCreateTime.get(499).getCreateTime(), "你记录的日记达到500篇！"));
+        }
+        if (diaryListSortByCreateTime.size() >= 1000) {
+            enventList.add(new Envent(diaryListSortByCreateTime.get(999).getCreateTime(), "你记录的日记达到1000篇！"));
+        }
 
         long wordCount = 0;
         int wordCountFlag = 0;

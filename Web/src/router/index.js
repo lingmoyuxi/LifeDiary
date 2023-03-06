@@ -6,6 +6,7 @@ import LoginView from "@/views/LoginView.vue";
 import LayoutView from "@/views/LayoutVIew.vue";
 import EditorView from "@/views/EditorView.vue";
 import TimeAxisView from '@/views/TimeAxisView.vue'
+import UserSettingView from '@/views/UserSettingView.vue'
 
 Vue.use(VueRouter);
 
@@ -29,10 +30,15 @@ const routes = [
                 path: "editor",
                 name: "EditorView",
                 component: EditorView,
-            },{
+            }, {
                 path: "time",
                 name: "TimeAxisView",
                 component: TimeAxisView,
+            },
+            {
+                path: "userSetting",
+                name: "UserSettingView",
+                component: UserSettingView,
             }
 
         ]

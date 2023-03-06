@@ -26,6 +26,10 @@ public class Result {
         return new Result(200, "操作成功", data);
     }
 
+    public static Result success(Integer code, Object data) {
+        return new Result(code, "操作成功", data);
+    }
+
     public static Result success(String msg) {
         return new Result(200, msg, null);
     }

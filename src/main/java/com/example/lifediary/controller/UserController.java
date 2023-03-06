@@ -115,6 +115,7 @@ public class UserController extends BaseController {
         map.put("id", user.getId());
         map.put("name", user.getName());
         map.put("account", user.getAccount());
+        map.put("icon", user.getIcon());
         map.put("token", token);
         returnInfo.put("userInfo", map);
         returnInfo.put("menuList", "");
