@@ -4,11 +4,12 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id,
+        id
+        ,
         status,
         create_time,
         update_time,
-        diary_id, type, address
+        user_id, diary_id, type, address
     </sql>
 
 </mapper>

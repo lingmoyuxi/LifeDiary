@@ -8,12 +8,11 @@
 
     <el-upload
         class="avatar-uploader"
-        :action="uploadImgUrl"
+        :http-request="uploadFile"
         :accept="'image/*,video/*'"
         :show-file-list="false"
-        :on-success="uploadEditorSuccess"
-        :on-error="uploadEditorError"
-        :before-upload="beforeEditorUpload"/>
+        action=""
+        name="file"/>
 
     <el-form-item label="标题" size="mini" prop="title">
       <el-input v-model="diary.title" placeholder="日记的标题是什么呢？"/>
@@ -45,7 +44,6 @@ import * as Quill from 'quill'
 
 // 这里引入修改过的video模块并注册
 import Video from '@/utils/video'
-import tools from "@/utils/utils";
 //获取登录token，引入文件，如果只是简单测试，没有上传文件是否登录的限制的话，
 //这个token可以不用获取，文件可以不引入，把上面对应的上传文件携带请求头  :headers="headers" 这个代码删掉即可
 
@@ -75,9 +73,6 @@ export default {
   name: "MyQuillEditor",
   data() {
     return {
-      headers: {
-        Authorization: tools.getToken(),
-      },
       isUpdateMode: false,
       oldDiary: {},
       diary: {
@@ -93,8 +88,7 @@ export default {
       restaurants: [
         // {'value': '日常',},
       ],
-      uploadImgUrl: "/v1/admin/common/upload",
-      uploadUrlPath: "没有文件上传",
+      baseUrl: "",
       quillUpdateImg: false,
       content: '',    //最终保存的内容
       editorOption: {
@@ -112,20 +106,20 @@ export default {
           toolbar: {
             container: toolbarOptions,  // 工具栏
             handlers: {
-              // 'image': function (value) {
-              //   if (value) {
-              //     document.querySelector('.avatar-uploader input').click()
-              //   } else {
-              //     this.quill.format('image', false);
-              //   }
-              // },
-              // 'video': function (value) {
-              //   if (value) {
-              //     document.querySelector('.avatar-uploader input').click()
-              //   } else {
-              //     this.quill.format('video', false);
-              //   }
-              // },
+              'image': function (value) {
+                if (value) {
+                  document.querySelector('.avatar-uploader input').click()
+                } else {
+                  this.quill.format('image', false);
+                }
+              },
+              'video': function (value) {
+                if (value) {
+                  document.querySelector('.avatar-uploader input').click()
+                } else {
+                  this.quill.format('video', false);
+                }
+              },
             }
           }
         }
@@ -313,57 +307,45 @@ export default {
     }
   },
   props: {
-    // diary:Object,
     diaty_id: Number,
   },
   computed: {},
   methods: {
-    //上传图片之前async
-    beforeEditorUpload(res, file) {
-      //显示上传动画
+    uploadFile(item) {
       this.quillUpdateImg = true;
-      //  const res1 = await uploadImage()
-      // console.log(res1,'=====');
-      // this.$emit('before',res, file)
-      console.log(res);
-      console.log(file);
-    },
-    // 上传图片成功
-    uploadEditorSuccess(res, file) {
-      console.log("上传成功")
-      // this.$emit('upload',res, file)
-      console.log(res, file);
-      //拼接出上传的图片在服务器的完整地址
-      let imgUrl = res.data.url;
-      let type = imgUrl.substring(imgUrl.lastIndexOf(".") + 1);
-      console.log(type);
-      // 获取富文本组件实例
-      let quill = this.$refs.customQuillEditor.quill;
-      // 获取光标所在位置
-      let length = quill.getSelection().index;
-      // 插入图片||视频  res.info为服务器返回的图片地址
-      if (type == 'mp4' || type == 'MP4') {
-        quill.insertEmbed(length, 'video', imgUrl)
-      } else {
-        quill.insertEmbed(length, 'image', imgUrl)
-      }
-      // 调整光标到最后
-      quill.setSelection(length + 1)
-      //取消上传动画
+      var data = new FormData()
+      data.append('file', item.file)
+      console.log(data)
+      this.$axios.post("file/upload", data,
+          {headers: {'content-type': 'application/x-www-form-urlencoded'}})
+          .then((res) => {
+            if (res.code === 200) {
+              //   //拼接出上传的图片在服务器的完整地址
+              let imgUrl = this.baseUrl + res.data;
+              let type = imgUrl.substring(imgUrl.lastIndexOf(".") + 1);
+              console.log(type);
+              console.log(imgUrl);
+              //   // 获取富文本组件实例
+              let quill = this.$refs.customQuillEditor.quill;
+              //   // 获取光标所在位置
+              let length = quill.getSelection().index;
+              //   // 插入图片||视频  res.info为服务器返回的图片地址
+              if (type == 'mp4' || type == 'MP4') {
+                quill.insertEmbed(length, 'video', imgUrl)
+              } else {
+                quill.insertEmbed(length, 'image', imgUrl)
+              }
+              //   // 调整光标到最后
+              quill.setSelection(length + 1)
+              this.$message.info("添加成功")
+            } else {
+              this.$message.error(res.msg)
+            }
+            //   //取消上传动画
+            this.quillUpdateImg = false;
+          })
+
       this.quillUpdateImg = false;
-    },
-    // 上传(文件)图片失败
-    uploadEditorError(res, file) {
-      console.log(res);
-      console.log(file);
-      //页面提示
-      this.$message.error('上传图片失败')
-      //取消上传动画
-      this.quillUpdateImg = false;
-    },
-    //上传组件返回的结果
-    uploadResult: function (res) {
-      this.uploadUrlPath = res;
     },
     //提交事件
     onSubmit(formName) {
@@ -419,6 +401,7 @@ export default {
 
   },
   mounted() {
+    this.baseUrl = this.$axios.defaults.baseURL;
     // 工具栏按钮提示
     for (let item of this.toolbarTips) {
       let tip = document.querySelector('.quill-editor ' + item.Choice);
@@ -427,8 +410,10 @@ export default {
     }
     if (!this.diaty_id) {
       let data = JSON.parse(sessionStorage.getItem('data'))
-      //nextTick防止element 表单重置方法失效
-      this.$nextTick(() => Object.assign(this, data))
+      if (data != null) {
+        //nextTick防止element 表单重置方法失效
+        this.$nextTick(() => Object.assign(this, data))
+      }
       this.isUpdateMode = false;
     } else {
       this.$axios.get('/diary/diaryInfo', {params: {id: this.diaty_id}}).then((res) => {
@@ -445,7 +430,7 @@ export default {
   },
   //保存数据
   beforeDestroy() {
-    if(!this.isUpdateMode){
+    if (!this.isUpdateMode) {
       if (this.diary.type || this.diary.content || this.diary.title) {
         sessionStorage.setItem('data', JSON.stringify(this.$data))
       } else {

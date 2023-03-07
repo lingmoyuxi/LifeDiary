@@ -7,6 +7,7 @@ import com.example.lifediary.dto.DiaryList;
 import com.example.lifediary.dto.PageInfo;
 import com.example.lifediary.dto.Result;
 import com.example.lifediary.entity.Diary;
+import com.example.lifediary.entity.Resource;
 import com.example.lifediary.utils.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -102,6 +103,14 @@ public class DiaryController extends BaseController {
             return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
         }
         diary.setUseId(userId);
+
+        //更新资源信息
+        LambdaQueryWrapper<Resource> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Resource::getUserId, userId).eq(Resource::getStatus, "0");
+        List<Resource> resourceList = resourceService.list(wrapper);
+        resourceList.forEach(e -> e.setStatus(1));
+        resourceService.updateBatchById(resourceList);
+
         return diaryService.save(diary) ? Result.success() : Result.error();
     }
 
@@ -116,6 +125,14 @@ public class DiaryController extends BaseController {
         wrapper.eq(Diary::getUseId, userId).eq(Diary::getId, newDiary.getId());
         Diary diary = diaryService.getOne(wrapper);
         if (diary != null) {
+
+            //更新资源信息
+            LambdaQueryWrapper<Resource> wrapper2 = new LambdaQueryWrapper<>();
+            wrapper2.eq(Resource::getUserId, userId).eq(Resource::getStatus, "0");
+            List<Resource> resourceList = resourceService.list(wrapper2);
+            resourceList.forEach(e -> e.setStatus(1));
+            resourceService.updateBatchById(resourceList);
+
             diaryService.update(newDiary, wrapper);
             return Result.success();
         } else {

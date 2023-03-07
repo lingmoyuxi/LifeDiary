@@ -1,10 +1,10 @@
-import  { Quill }  from 'vue-quill-editor'
+import {Quill} from 'vue-quill-editor'
 
 // 源码中是import直接倒入，这里要用Quill.import引入
 const BlockEmbed = Quill.import('blots/block/embed')
 // const Link = Quill.import('formats/link')
-
 const ATTRIBUTES = ['height', 'width']
+const Link = Quill.import('formats/link')
 
 class Video extends BlockEmbed {
     static create (value) {
@@ -25,11 +25,12 @@ class Video extends BlockEmbed {
         node.setAttribute('x5-video-orientation', 'portraint') // 竖屏播放 声明了h5才能使用  播放器支付的方向，landscape横屏，portraint竖屏，默认值为竖屏
         node.setAttribute('x5-playsinline', 'true') // 兼容安卓 不全屏播放
         node.setAttribute('x5-video-player-fullscreen', 'true')    // 全屏设置，设置为 true 是防止横屏
-        node.setAttribute('src', window.jsValue)
+        node.setAttribute('src', this.sanitize(value))
         return node
     }
 
-    static formats (domNode) {
+
+    static formats(domNode) {
         return ATTRIBUTES.reduce((formats, attribute) => {
             if (domNode.hasAttribute(attribute)) {
                 formats[attribute] = domNode.getAttribute(attribute)
@@ -38,16 +39,15 @@ class Video extends BlockEmbed {
         }, {})
     }
 
-    // static sanitize (url) {
-    //
-    //      // eslint-disable-line import/no-named-as-default-member
-    // }
+    static sanitize(url) {
+        return Link.sanitize(url) // eslint-disable-line import/no-named-as-default-member
+    }
 
-    static value (domNode) {
+    static value(domNode) {
         return domNode.getAttribute('src')
     }
 
-    format (name, value) {
+    format(name, value) {
         if (ATTRIBUTES.indexOf(name) > -1) {
             if (value) {
                 this.domNode.setAttribute(name, value)

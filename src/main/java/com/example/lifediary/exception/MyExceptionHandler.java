@@ -34,7 +34,7 @@ public class MyExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(Exception e) {
-        return Result.error(e.getMessage());
+        return Result.error(e.toString());
     }
 
 }

@@ -12,8 +12,8 @@
         <el-menu-item index="3">时光轴</el-menu-item>
         <el-submenu index="4" v-if="userinfo">
           <template slot="title">{{ userinfo.name }}</template>
-          <el-menu-item index="4-1">修改个人信息</el-menu-item>
-          <el-menu-item index="4-2">退出登录</el-menu-item>
+          <el-menu-item index="4-1">管理</el-menu-item>
+          <el-menu-item index="4-2">退出</el-menu-item>
         </el-submenu>
       </el-menu>
     </el-header>
@@ -56,7 +56,7 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      userinfo: null
+      // userinfo: null
     };
   },
   computed: {
@@ -68,10 +68,13 @@ export default {
     },
     activeIndexComputed() {
       return this.childernRoutes.findIndex((e) => e.component.name === this.$route.name)
+    },
+    userinfo() {
+      return tools.getUserInfo()
     }
   },
   created() {
-    this.userinfo = tools.getUserInfo()
+    // this.userinfo = tools.getUserInfo()
   },
   methods: {
     handleSelect(key) {

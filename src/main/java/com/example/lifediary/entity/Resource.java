@@ -2,8 +2,6 @@ package com.example.lifediary.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.example.lifediary.entity.BaseEntity;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -11,11 +9,11 @@ import lombok.Setter;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author MoYuXi
- * @since 2023-02-18
+ * @since 2023-03-07
  */
 @Getter
 @Setter
@@ -24,6 +22,10 @@ import lombok.Setter;
 public class Resource extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty("用户ID")
+    @TableField("user_id")
+    private Integer userId;
 
     @ApiModelProperty("日记id")
     @TableField("diary_id")

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.lifediary.dto.PageInfo;
 import com.example.lifediary.dto.Result;
+import com.example.lifediary.dto.UserUpdate;
 import com.example.lifediary.entity.User;
 import com.example.lifediary.utils.JwtUtils;
 import io.swagger.annotations.Api;
@@ -59,13 +60,18 @@ public class UserController extends BaseController {
 
     @ApiOperation(value = "用户更新", notes = "用户的更新操作")
     @PostMapping("/update")
-    public Result update(@Validated @RequestBody User user) {
+    public Result update(@Validated @RequestBody UserUpdate userUpdate) {
         Integer userId = JwtUtils.getUserId(request);
-        if (user.getId().equals(userId)) {
-            return userService.updateById(user) ? Result.success() : Result.error();
+        User user = userService.getById(userId);
+        if (user.getPassword().equals(userUpdate.getOldPassword())) {
+            user.setPassword(userUpdate.getNewPassword());
         } else {
-            return Result.error("token与用户id不匹配，请确认id是否正确，或者重新登录获取token！");
+            if (!userUpdate.getOldPassword().isEmpty()) {
+                return Result.error("原密码错误！");
+            }
         }
+        user.setName(userUpdate.getName());
+        return userService.updateById(user) ? Result.success() : Result.error("服务器更新数据出错！");
     }
 
     @ApiOperation(value = "用户删除", notes = "用户的批量删除")
