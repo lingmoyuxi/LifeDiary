@@ -70,6 +70,8 @@
   background-color: #242645;
   color: #fff;
   text-align: center;
+  background: url("@/assets/bg.jpg");
+  background-size: cover;
 }
 
 .mylogin {
@@ -77,16 +79,15 @@
   height: 280px;
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 20%;
   bottom: 0;
   margin: auto;
   padding: 30px 40px 40px 40px;
   box-shadow: -15px 15px 10px rgba(6, 17, 47, 0.85);
   opacity: 1;
   background: linear-gradient(225deg,
-      rgba(255, 255, 255, 0) 15%,
-      rgb(0, 0, 0) 100%);
+  rgba(255, 255, 255, 0) 15%,
+  rgb(0, 0, 0) 100%);
 }
 
 .divlogin {

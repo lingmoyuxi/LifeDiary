@@ -11,13 +11,16 @@
         <el-menu-item index="2">写日记</el-menu-item>
         <el-menu-item index="3">时光轴</el-menu-item>
         <el-submenu index="4" v-if="userinfo">
-          <template slot="title">{{ userinfo.name }}</template>
+          <template slot="title">
+            <el-avatar :size="45" :src="this.$axios.defaults.baseURL + userinfo.icon"></el-avatar>
+            {{ userinfo.name }}
+          </template>
           <el-menu-item index="4-1">管理</el-menu-item>
           <el-menu-item index="4-2">退出</el-menu-item>
         </el-submenu>
       </el-menu>
     </el-header>
-    <el-main>
+    <el-main style="height: 100%">
       <router-view/>
     </el-main>
   </el-container>
@@ -25,7 +28,13 @@
 </template>
 
 <style scoped>
+
 .el-container {
+  position: relative;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
   width: 100%;
   height: 100%;
 }
@@ -36,6 +45,8 @@
 
 .el-main {
   padding: 0 !important;
+  background: url("@/assets/bg.jpg");
+  background-size: cover;
 }
 
 .el-menu-demo {

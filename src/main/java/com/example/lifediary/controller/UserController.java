@@ -104,6 +104,7 @@ public class UserController extends BaseController {
         if (userService.getOne(wrapper) == null) {
             User user = new User();
             user.setAccount(account);
+            user.setIcon("static/upload/icon/defaulticon.png");
             user.setName("用户" + (new Random().nextInt(90000) + 10000));
             user.setPassword(password);
             userService.save(user);

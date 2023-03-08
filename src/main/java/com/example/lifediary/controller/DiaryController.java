@@ -7,11 +7,11 @@ import com.example.lifediary.dto.DiaryList;
 import com.example.lifediary.dto.PageInfo;
 import com.example.lifediary.dto.Result;
 import com.example.lifediary.entity.Diary;
-import com.example.lifediary.entity.Resource;
 import com.example.lifediary.utils.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +32,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/diary")
 public class DiaryController extends BaseController {
+    @Autowired
+    ResourceController resourceController;
 
     @ApiOperation(value = "日记列表", notes = "获取所有日记信息")
     @GetMapping("/list")
@@ -103,15 +105,17 @@ public class DiaryController extends BaseController {
             return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
         }
         diary.setUseId(userId);
+        if (diaryService.save(diary)) {
+            LambdaQueryWrapper<Diary> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Diary::getUseId, userId).eq(Diary::getContent, newDiary.getContent());
+            Diary one = diaryService.getOne(wrapper);
+            resourceController.bindDiary(userId, one.getId());
+            return Result.success();
+        } else {
+            return Result.error();
+        }
 
-        //更新资源信息
-        LambdaQueryWrapper<Resource> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Resource::getUserId, userId).eq(Resource::getStatus, "0");
-        List<Resource> resourceList = resourceService.list(wrapper);
-        resourceList.forEach(e -> e.setStatus(1));
-        resourceService.updateBatchById(resourceList);
 
-        return diaryService.save(diary) ? Result.success() : Result.error();
     }
 
     @ApiOperation(value = "日记更新", notes = "日记的更新操作")
@@ -125,14 +129,7 @@ public class DiaryController extends BaseController {
         wrapper.eq(Diary::getUseId, userId).eq(Diary::getId, newDiary.getId());
         Diary diary = diaryService.getOne(wrapper);
         if (diary != null) {
-
-            //更新资源信息
-            LambdaQueryWrapper<Resource> wrapper2 = new LambdaQueryWrapper<>();
-            wrapper2.eq(Resource::getUserId, userId).eq(Resource::getStatus, "0");
-            List<Resource> resourceList = resourceService.list(wrapper2);
-            resourceList.forEach(e -> e.setStatus(1));
-            resourceService.updateBatchById(resourceList);
-
+            resourceController.bindDiary(userId, diary.getId());
             diaryService.update(newDiary, wrapper);
             return Result.success();
         } else {
@@ -143,6 +140,11 @@ public class DiaryController extends BaseController {
     @ApiOperation(value = "日记删除", notes = "日记的删除")
     @GetMapping("/delete")
     public Result delete(@NotNull @RequestParam Integer id) {
+        Integer userId = JwtUtils.getUserId(request);
+        if (userId == -1) {
+            return Result.error(401, "Token验证未通过或已失效，请重新登录获取token！");
+        }
+        resourceController.unBindDiary(userId, id);
         return diaryService.removeById(id) ? Result.success() : Result.error();
     }
 

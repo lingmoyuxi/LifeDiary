@@ -83,7 +83,8 @@ public class OtherController extends BaseController {
         });
         if (optional.isPresent()) {
             diary = optional.get();
-            enventList.add(new Envent(diary.getUpdateTime(), "是你最近更新你的日记的时间！"));
+            if (diary.getUpdateTime() != null)
+                enventList.add(new Envent(diary.getUpdateTime(), "是你最近更新你的日记的时间！"));
         }
 
         optional = diaryList.stream().max(Comparator.comparing(Diary::getCreateTime));

@@ -58,6 +58,7 @@ public class FileController extends BaseController {
             String filename = UUID.randomUUID() + suffixName;
             try {
                 File iconFile = new File(getPath(path), filename);
+                if (!iconFile.exists()) iconFile.mkdirs();
                 file.transferTo(iconFile);
                 Resource data = new Resource();
                 data.setUserId(userId);
@@ -94,6 +95,7 @@ public class FileController extends BaseController {
             User user = userService.getById(userId);
             String icon = user.getIcon();
             File iconFile = new File(getPath(path), filename);
+            if (!iconFile.exists()) iconFile.mkdirs();
             file.transferTo(iconFile);
             user.setIcon("static/" + path + filename);
             if (icon != null && !icon.isEmpty() && !icon.equals("static/upload/icon/defaulticon.png")) {
@@ -117,7 +119,7 @@ public class FileController extends BaseController {
     public String getPath(String subdirectory) throws FileNotFoundException {
         String property = System.getProperty("user.dir");
         File file = new File(property, subdirectory.startsWith("static/") ? subdirectory : "static/" + subdirectory);
-        if (!file.exists()) file.mkdirs();
+//        if (!file.exists()) file.mkdirs();
         return file.getPath();
     }
 

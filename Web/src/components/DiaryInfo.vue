@@ -4,11 +4,11 @@
 *@date 2023/2/21 15:06:50
 -->
 <template>
-  <el-dialog class="indialog" :visible.sync="isShow" width="80%" :title="diary.title" >
-    <el-form :inline="true" >
-      <el-form-item ><span>日记分类：{{diary.type}}</span></el-form-item>
-      <el-form-item ><span>创建时间：{{diary.createTime}}</span></el-form-item>
-      <el-form-item v-if="diary.updateTime"><span>最近更新：{{diary.updateTime}}</span></el-form-item>
+  <el-dialog :title="diary.title" :visible.sync="isShow" class="indialog">
+    <el-form :inline="true">
+      <el-form-item><span>日记分类：{{ diary.type }}</span></el-form-item>
+      <el-form-item><span>创建时间：{{ diary.createTime }}</span></el-form-item>
+      <el-form-item v-if="diary.updateTime"><span>最近更新：{{ diary.updateTime }}</span></el-form-item>
     </el-form>
     <div v-html="diary.content" class="myDiaryDiv"/>
   </el-dialog>
@@ -40,14 +40,24 @@ export default {
 </script>
 
 <style scoped>
-.indialog >>> .el-dialog{
+.el-dialog {
+  /*position: absolute;*/
+  /*left: 50px;*/
+  /*right: 50px;*/
+}
+
+.indialog >>> .el-dialog {
   background-color: #f1f0ed;
+  width: auto;
+  margin: 50px;
+  margin-top: 50px !important;
+  margin-bottom: 50px !important;
 }
 .indialog >>> .el-dialog__body {
   padding: 0 20px 20px;
 }
-.indialog >>> .el-dialog__header{
-  padding: 20px;
+.indialog >>> .el-dialog__header {
+  padding: 10px 20px 0px;
 }
 .indialog >>> .el-dialog__header, .el-dialog__body {
   background-color: #f1f0ed;
@@ -61,8 +71,8 @@ export default {
 }
 
 
-.myDiaryDiv{
-  max-height: 50vh;
+.myDiaryDiv {
+  max-height: calc(100vh - 200px);
   overflow: auto;
 }
 /* 滚动条整体 */
